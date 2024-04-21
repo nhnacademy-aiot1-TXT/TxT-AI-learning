@@ -1,2 +1,8 @@
-.ipynb_checkpoints
-\.env
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment configuration files
+.env
+
+# Machine learning model files
+*.joblib
