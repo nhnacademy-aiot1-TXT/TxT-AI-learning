@@ -2,7 +2,13 @@
 .ipynb_checkpoints/
 
 # Environment configuration files
-.env
+*.env
 
 # Machine learning model files
 *.joblib
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
