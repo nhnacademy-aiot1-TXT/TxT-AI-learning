@@ -11,16 +11,18 @@ import time
 # 데이터 로드 및 데이터프레임으로 변환
 def prepare_data(data_manager, topics):
     results = {}
-    for topic, time, calc in topics:
-        df = data_manager.query_influx(topic) # DB에서 데이터 불러오기
-        df = DataManager.preprocess_data(df, 'class_a') # class_a 데이터만 가져오기
+    for topic, place , time, calc in topics:
+        df = data_manager.query_influx(topic, place) # DB에서 데이터 불러오기
+        df = DataManager.preprocess_data(df, place) # 해당 장소 데이터만 가져오기
         series = DataManager.resample_data(df, 'value', time, calc) # 데이터 리샘플링
-        results[topic] = series
+        results[place+'_'+topic] = series
     return pd.DataFrame({
-        'temperature': results['temperature'],
-        'humidity': results['humidity'],
-        'people_count': results['total_people_count'],
-        'air_conditional': results['magnet_status']
+        'outdoor_temperature': results['outdoor_temperature'],
+        'outdoor_humidity': results['outdoor_humidity'],
+        'temperature': results['class_a_temperature'],
+        'humidity': results['class_a_humidity'],
+        'people_count': results['class_a_total_people_count'],
+        'air_conditional': results['class_a_magnet_status']
     })
 
 # 결측치 확인 및 제거
@@ -55,10 +57,12 @@ def main():
     env_vars = load_environment_variables()
     data_manager = DataManager(env_vars['db_url'], env_vars['token'], env_vars['org'], env_vars['bucket'])
     topics = [
-        ('temperature', 'T', 'mean'),
-        ('humidity', 'T', 'mean'),
-        ('total_people_count', 'T', 'last'),
-        ('magnet_status', 'T', 'last'),
+        ('temperature', 'outdoor', 'T', 'mean'),
+        ('humidity', 'outdoor', 'T', 'mean'),
+        ('temperature', 'class_a', 'T', 'mean'),
+        ('humidity', 'class_a', 'T', 'mean'),
+        ('total_people_count', 'class_a', 'T', 'last'),
+        ('magnet_status', 'class_a', 'T', 'last'),
     ]
     data_df = prepare_data(data_manager, topics)
     data_manager.close_connection()
@@ -79,4 +83,5 @@ def schedule_main():
 
 
 if __name__ == '__main__':
-    schedule_main()
+    main()
+    # schedule_main()
