@@ -26,6 +26,7 @@ jobs:
         
     - name: Install dependencies without plugins
       run: |
+        conda config --set solver_backend classic
         conda --no-plugins env update --file environment.yml --name base
     
     - name: Activate Conda environment
