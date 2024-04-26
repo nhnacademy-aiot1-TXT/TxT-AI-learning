@@ -80,7 +80,7 @@ jobs:
       with:
         host: ${{ secrets.SSH_IP }}
         username: ${{ secrets.SSH_ID }}
-        key: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script_stop: true
         script: "./startup.sh"
