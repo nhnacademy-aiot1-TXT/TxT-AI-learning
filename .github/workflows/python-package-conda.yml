@@ -28,6 +28,10 @@ jobs:
       run: |
         conda env update --file environment.yml --name base
     
+    - name: Activate Conda environment
+      run: |
+        echo "source activate base" >> $GITHUB_ENV
+    
     - name: Load envirionment variables
       run: |
         touch .env
