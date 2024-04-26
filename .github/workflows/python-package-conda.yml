@@ -29,7 +29,7 @@ jobs:
         
     - name: Install dependencies without plugins
       run: |
-        conda --no-plugins install --file environment.yml --solver classic
+        conda --no-plugins install python=3.10 numpy pandas flask pytest flake8 --name myenv --solver classic
     
     - name: Activate Conda environment
       run: |
