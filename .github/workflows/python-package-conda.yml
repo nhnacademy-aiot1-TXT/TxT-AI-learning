@@ -84,7 +84,8 @@ jobs:
         port: 22
         script_stop: true
         script: |
-          /home/ubuntu/anaconda3/bin/conda activate myenv
+          source /home/ubuntu/anaconda3/bin/conda.sh
+          conda activate myenv
           echo "CONDA_ENV=myenv" >> $GITHUB_ENV
           ./startup.sh
 
