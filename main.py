@@ -13,7 +13,7 @@ def prepare_data(data_manager, topics):
     results = {}
     for topic, place , time, calc in topics:
         df = data_manager.query_influx(topic, place) # DB에서 데이터 불러오기
-        df = DataManager.preprocess_data(df, place) # 해당 장소 데이터만 가져오기
+        df = DataManager.drop_and_time_convert_data(df) # 필요없는 컬럼 삭제 및 한국시간으로 변환
         series = DataManager.resample_data(df, 'value', time, calc) # 데이터 리샘플링
         results[place+'_'+topic] = series
     return pd.DataFrame({
@@ -67,6 +67,9 @@ def main():
     data_df = prepare_data(data_manager, topics)
     data_manager.close_connection()
     print('데이터 프레임 : \n', data_df)
+
+    data_df = DataManager.process_time_column(data_df)
+    print('process_time_column 결과', data_df)
 
     data_df_filled = handle_missing_values(data_df)
     print('After processing null value: \n', data_df_filled.isnull().sum())

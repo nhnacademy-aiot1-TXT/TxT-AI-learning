@@ -26,7 +26,7 @@ class DataManager:
         self.client.close()
 
     @staticmethod
-    def preprocess_data(df, place):
+    def drop_and_time_convert_data(df):
         df = df.drop(columns=['_start', '_stop', 'result', 'table', 'topic', 'device'])
         df['_time'] = pd.to_datetime(df['_time']).dt.tz_convert('Asia/Seoul').dt.tz_localize(None)
         return df
@@ -38,25 +38,41 @@ class DataManager:
             return df[column].resample(freq).mean()
         elif method == 'last':
             return df[column].resample(freq).last()
-        
+    
+    @staticmethod
+    def process_time_column(df):
+        # 날짜값 제거
+        df.index = df.index.time
+        # time coulumn 생성
+        df['time'] = df.index
+        df['time_in_minutes'] = df['time'].apply(DataManager.time_to_minutes)
+        df.drop(columns=['time'], inplace=True)
+        return df
+
+    @staticmethod
+    def time_to_minutes(t):
+        # 컬럼의 datetime.time을 분으로 변환
+        return t.hour * 60 + t.minute
+    
     @staticmethod
     def fill_missing_values(df):
         # 'outdoor_temperature'와 'outdoor_humidity' 컬럼의 첫 번째 값이 결측치인 경우 전체 평균값으로 채우기
-        if pd.isna(df.loc[df.index[0], 'outdoor_temperature']):
+        if pd.isna(df['outdoor_temperature'].iloc[0]):
             avg_temperature = df['outdoor_temperature'].mean()
             df.at[df.index[0], 'outdoor_temperature'] = avg_temperature
-
-        if pd.isna(df.loc[df.index[0], 'outdoor_humidity']):
+        if pd.isna(df['outdoor_humidity'].iloc[0]):
             avg_humidity = df['outdoor_humidity'].mean()
             df.at[df.index[0], 'outdoor_humidity'] = avg_humidity
 
         # 'air_conditional' 컬럼의 첫 번째 값이 결측치인 경우 'close'로 설정
-        if pd.isna(df.loc[df.index[0], 'air_conditional']):
+        if pd.isna(df['air_conditional'].iloc[0]):
             df.at[df.index[0], 'air_conditional'] = 'close'
+
         # 'people_count' 컬럼에서 첫 번째 값이 결측치인 경우, 최근 유효 값으로 채우기
-        if pd.isna(df.loc[df.index[0], 'people_count']):
+        if pd.isna(df['people_count'].iloc[0]):
             notnull_peoplecount = df[df['people_count'].notnull()].iloc[0]['people_count']
             df.at[df.index[0], 'people_count'] = notnull_peoplecount
+
         # 나머지 결측치 전방 채우기
         df = df.fillna(method='ffill', axis=0)
         return df
