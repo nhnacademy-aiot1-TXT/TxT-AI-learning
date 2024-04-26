@@ -1,0 +1,6 @@
+python-dotenv
+requests
+scikit-learn
+xgboost
+influxdb-client
+schedule
