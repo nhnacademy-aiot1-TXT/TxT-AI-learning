@@ -1,6 +1,9 @@
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
 from sklearn.metrics import accuracy_score
 import xgboost as xgb
 
@@ -12,12 +15,13 @@ class ModelManager:
         self.predictions = {}
 
     def train_test_split(self):
-        X = self.data_df[['temperature', 'humidity', 'people_count']]
+        X = self.data_df[['outdoor_temperature', 'outdoor_humidity', 'temperature', 'humidity', 'people_count', 'time_in_minutes']]
         y = self.data_df['air_conditional']
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     def train_logistic_regression(self):
-        model = LogisticRegression()
+        model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
+        # model = LogisticRegression()
         model.fit(self.X_train, self.y_train)
         self.models['LogisticRegression'] = model
         self.predictions['LogisticRegression'] = model.predict(self.X_test)
