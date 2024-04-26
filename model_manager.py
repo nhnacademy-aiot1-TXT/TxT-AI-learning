@@ -7,7 +7,6 @@ import xgboost as xgb
 class ModelManager:
     def __init__(self, data_df):
         self.data_df = data_df
-        self.data_df.index = self.data_df.index.time  # 날짜값 제거
         self.data_df['air_conditional'] = self.data_df['air_conditional'].map({'close': 0, 'open': 1}) # air_conditional의 값이 close면 0, open이면 1로 변경
         self.models = {}
         self.predictions = {}
