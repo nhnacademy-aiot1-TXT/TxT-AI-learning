@@ -84,6 +84,7 @@ jobs:
         port: 22
         script_stop: true
         script: |
+          echo test > test.log
           conda activate myenv
           echo "CONDA_ENV=myenv" >> $GITHUB_ENV
           ./startup.sh
