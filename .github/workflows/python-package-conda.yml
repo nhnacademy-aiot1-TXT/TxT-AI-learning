@@ -1,0 +1,79 @@
+name: Python Package using Conda
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+        
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+        
+    - name: Install dependencies
+      run: |
+        conda env update --file environment.yml --name base
+    
+    - name: Load envirionment variables
+      run: |
+        touch .env
+        echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+        echo "DB_TOKEN=${{ secrets.DB_TOKEN }}" >> .env
+        echo "DB_ORG=${{ secrets.DB_ORG }}" >> .env
+        echo "DB_BUCKET=${{ secrets.DB_BUCKET }}" >> .env
+        echo "STORAGE_URL=${{ secrets.STORAGE_URL }}" >> .env
+        echo "CONTAINER_NAME=${{ secrets.CONTAINER_NAME }}" >> .env
+        echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
+        echo "TENANT_ID=${{ secrets.TENANT_ID }}" >> .env
+        echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> .env
+        echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+        
+    - name: Lint with flake8
+      run: |
+        conda install flake8
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+    - name: Test with pytest
+      run: |
+        conda install pytest
+        pytest
+
+    - name: upload file
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_IP }}
+        username: ${{ secrets.SSH_ID }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "."
+        target: "~/"
+        rm: false
+
+    - name: execute shell script
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_IP }}
+        username: ${{ secrets.SSH_ID }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script_stop: true
+        script: "./startup.sh"
+
+    
+    
