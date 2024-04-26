@@ -30,12 +30,12 @@ jobs:
 #    - name: Install dependencies without plugins
 #      run: |
 #        conda create --name myenv python=3.10 numpy pandas flask pytest flake8
-#
-#    - name: Activate Conda environment
-#      run: |
-#        source activate myenv
-#        echo "CONDA_ENV=myenv" >> $GITHUB_ENV
-#
+
+    - name: Activate Conda environment
+      run: |
+        source activate myenv
+        echo "CONDA_ENV=myenv" >> $GITHUB_ENV
+
 #    - name: Load envirionment variables
 #      run: |
 #        touch .env
