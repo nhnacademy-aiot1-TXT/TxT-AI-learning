@@ -33,8 +33,9 @@ jobs:
     
     - name: Activate Conda environment
       run: |
-        echo "source activate myenv" >> $GITHUB_ENV
-    
+        source activate myenv
+        echo "CONDA_ENV=myenv" >> $GITHUB_ENV
+
     - name: Load envirionment variables
       run: |
         touch .env
