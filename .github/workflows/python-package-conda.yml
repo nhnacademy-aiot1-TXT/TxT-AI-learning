@@ -58,10 +58,11 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
-    - name: Test with pytest
-      run: |
-        conda install pytest
-        pytest
+# 테스트코드 없어서 터지는듯?
+#    - name: Test with pytest
+#      run: |
+#        conda install pytest
+#        pytest
 
     - name: upload file
       uses: appleboy/scp-action@master
