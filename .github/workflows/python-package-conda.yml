@@ -27,37 +27,37 @@ jobs:
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
         
-    - name: Install dependencies without plugins
-      run: |
-        conda create --name myenv python=3.10 numpy pandas flask pytest flake8
-    
-    - name: Activate Conda environment
-      run: |
-        source activate myenv
-        echo "CONDA_ENV=myenv" >> $GITHUB_ENV
-
-    - name: Load envirionment variables
-      run: |
-        touch .env
-        echo "DB_URL=${{ secrets.DB_URL }}" >> .env
-        echo "DB_TOKEN=${{ secrets.DB_TOKEN }}" >> .env
-        echo "DB_ORG=${{ secrets.DB_ORG }}" >> .env
-        echo "DB_BUCKET=${{ secrets.DB_BUCKET }}" >> .env
-        echo "STORAGE_URL=${{ secrets.STORAGE_URL }}" >> .env
-        echo "CONTAINER_NAME=${{ secrets.CONTAINER_NAME }}" >> .env
-        echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
-        echo "TENANT_ID=${{ secrets.TENANT_ID }}" >> .env
-        echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> .env
-        echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
-        
-    - name: Lint with flake8
-      run: |
-        conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-        
+#    - name: Install dependencies without plugins
+#      run: |
+#        conda create --name myenv python=3.10 numpy pandas flask pytest flake8
+#
+#    - name: Activate Conda environment
+#      run: |
+#        source activate myenv
+#        echo "CONDA_ENV=myenv" >> $GITHUB_ENV
+#
+#    - name: Load envirionment variables
+#      run: |
+#        touch .env
+#        echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+#        echo "DB_TOKEN=${{ secrets.DB_TOKEN }}" >> .env
+#        echo "DB_ORG=${{ secrets.DB_ORG }}" >> .env
+#        echo "DB_BUCKET=${{ secrets.DB_BUCKET }}" >> .env
+#        echo "STORAGE_URL=${{ secrets.STORAGE_URL }}" >> .env
+#        echo "CONTAINER_NAME=${{ secrets.CONTAINER_NAME }}" >> .env
+#        echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
+#        echo "TENANT_ID=${{ secrets.TENANT_ID }}" >> .env
+#        echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> .env
+#        echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+#
+#    - name: Lint with flake8
+#      run: |
+#        conda install flake8
+#        # stop the build if there are Python syntax errors or undefined names
+#        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+#
 # 테스트코드 없어서 터지는듯?
 #    - name: Test with pytest
 #      run: |
@@ -85,5 +85,10 @@ jobs:
         script_stop: true
         script: "./startup.sh"
 
-    
-    
+
+#pip install python-dotenv
+#pip install requests
+#pip install scikit-learn
+#pip install xgboost
+#pip install influxdb-client
+#pip install schedule
