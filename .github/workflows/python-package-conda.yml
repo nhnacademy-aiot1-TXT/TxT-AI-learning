@@ -29,7 +29,7 @@ jobs:
         
     - name: Install dependencies without plugins
       run: |
-        conda env update --file environment.yml --name base --solver libmamba
+        conda --no-plugins env update --file environment.yml --name base --solver libmamba
     
     - name: Activate Conda environment
       run: |
