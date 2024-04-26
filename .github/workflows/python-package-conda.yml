@@ -29,7 +29,7 @@ jobs:
         
     - name: Install dependencies without plugins
       run: |
-        conda --no-plugins install --file environment.yml --name myenv --solver classic
+        conda --no-plugins install --file environment.yml --solver classic
     
     - name: Activate Conda environment
       run: |
