@@ -10,6 +10,16 @@ import time
 
 # 데이터 로드 및 데이터프레임으로 변환
 def prepare_data(data_manager, topics):
+    """
+    지정된 토픽에 따라 데이터베이스에서 데이터를 쿼리하고, 필요한 처리를 수행한 후 데이터 프레임을 생성합니다.
+
+    Args:
+        data_manager (DataManager): 데이터베이스 쿼리를 관리하는 DataManager 인스턴스.
+        topics (list of tuple): 데이터를 쿼리할 토픽 목록. 각 튜플은 (측정 항목, 위치, 시간 간격, 집계 방식)을 포함합니다.
+
+    Returns:
+        DataFrame: 처리된 데이터가 포함된 판다스 데이터프레임.
+    """
     results = {}
     for topic, place , time, calc in topics:
         df = data_manager.query_influx(topic, place) # DB에서 데이터 불러오기
@@ -27,12 +37,30 @@ def prepare_data(data_manager, topics):
 
 # 결측치 확인 및 제거
 def handle_missing_values(data_df):
+    """
+    주어진 데이터 프레임에서 결측치를 확인하고, 처리합니다.
+
+    Args:
+        data_df (DataFrame): 결측치를 확인하고 처리할 데이터 프레임.
+
+    Returns:
+        DataFrame: 결측치가 처리된 데이터 프레임.
+    """
     null_values = data_df.isnull().sum()
     print('Initial null value:\n', null_values)
     return DataManager.fill_missing_values(data_df)
 
 # 모델 관리 인스턴스 생성 및 모델 훈련, 평가
 def train_and_evaluate_models(data_df_filled):
+    """
+    데이터 프레임을 사용하여 여러 머신러닝 모델을 훈련시키고 평가합니다.
+
+    Args:
+        data_df_filled (DataFrame): 훈련에 사용될 데이터 프레임.
+
+    Returns:
+        dict: 훈련된 모델 객체를 포함하는 딕셔너리.
+    """
     model_manager = ModelManager(data_df_filled)
     model_manager.train_test_split()
     model_manager.train_logistic_regression()
@@ -45,6 +73,16 @@ def train_and_evaluate_models(data_df_filled):
 
 # Storage Access 토큰 발급 및 모델 업로드
 def save_and_upload_model(model, env_vars):
+    """
+    훈련된 모델을 파일로 저장하고, 스토리지에 업로드합니다.
+
+    Args:
+        model (Model): 저장하고 업로드할 모델 객체.
+        env_vars (dict): 환경 변수들을 포함한 딕셔너리.
+
+    Returns:
+        None
+    """
     model_path, model_name = './', 'air_conditional_ai_model.joblib'
     joblib.dump(model, model_path + model_name)
     token = get_token(env_vars['auth_url'], env_vars['tenant_id'], env_vars['user_email'], env_vars['password'])
@@ -54,6 +92,9 @@ def save_and_upload_model(model, env_vars):
 
 
 def main():
+    """
+    데이터 전처리, 모델 훈련, 모델 저장 및 업로드 작업을 수행하는 메인 함수.
+    """
     env_vars = load_environment_variables()
     data_manager = DataManager(env_vars['db_url'], env_vars['token'], env_vars['org'], env_vars['bucket'])
     topics = [
@@ -78,6 +119,9 @@ def main():
     save_and_upload_model(model, env_vars)
 
 def schedule_main():
+    """
+    메인 함수를 주기적으로 실행하는 스케줄러를 설정합니다.
+    """
     schedule.every(10).minutes.do(main)
 
     while True:
@@ -86,5 +130,5 @@ def schedule_main():
 
 
 if __name__ == '__main__':
-    main()
-    # schedule_main()
+    # main()
+    schedule_main()
