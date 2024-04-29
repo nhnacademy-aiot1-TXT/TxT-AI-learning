@@ -41,7 +41,6 @@ class ModelManager:
         로지스틱 회귀 모델을 훈련합니다. 데이터는 표준화 후 로지스틱 회귀 알고리즘으로 학습시킵니다.
         """
         model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
-        # model = LogisticRegression()
         model.fit(self.X_train, self.y_train)
         self.models['LogisticRegression'] = model
         self.predictions['LogisticRegression'] = model.predict(self.X_test)
