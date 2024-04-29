@@ -11,7 +11,7 @@ def load_environment_variables():
     Returns:
         dict: 로드된 환경 변수들을 포함하는 사전. 각 키는 환경 변수의 이름이며, 값은 해당 환경 변수의 값입니다.
     """
-    load_dotenv('secret.env')
+    load_dotenv('.env')
     env_vars = {
         'db_url': os.getenv('DB_URL'),
         'token': os.getenv('DB_TOKEN'),
