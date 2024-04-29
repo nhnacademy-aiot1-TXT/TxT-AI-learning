@@ -4,9 +4,7 @@ from model_manager import ModelManager
 from data_manager import DataManager
 from issue_token import get_token
 import pandas as pd
-import schedule
 import joblib
-import time
 
 # 데이터 로드 및 데이터프레임으로 변환
 def prepare_data(data_manager, topics):
@@ -118,17 +116,6 @@ def main():
     model = train_and_evaluate_models(data_df_filled)
     save_and_upload_model(model, env_vars)
 
-def schedule_main():
-    """
-    메인 함수를 주기적으로 실행하는 스케줄러를 설정합니다.
-    """
-    schedule.every(10).minutes.do(main)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
 
 if __name__ == '__main__':
     main()
-    # schedule_main()

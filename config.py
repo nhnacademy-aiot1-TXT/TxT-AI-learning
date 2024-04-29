@@ -2,6 +2,8 @@ from dotenv import load_dotenv
 import os
 
 def load_environment_variables():
+
+    load_dotenv()
     """
     환경 변수 파일('.env')로부터 환경 변수를 로드하고 이를 사전으로 반환합니다.
 
@@ -11,7 +13,6 @@ def load_environment_variables():
     Returns:
         dict: 로드된 환경 변수들을 포함하는 사전. 각 키는 환경 변수의 이름이며, 값은 해당 환경 변수의 값입니다.
     """
-    load_dotenv('.env')
     env_vars = {
         'db_url': os.getenv('DB_URL'),
         'token': os.getenv('DB_TOKEN'),

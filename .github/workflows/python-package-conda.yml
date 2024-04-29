@@ -1,14 +1,17 @@
 name: Python Package using Conda
 
 on:
-  push:
-    branches:
-    - main
-    - develop
-  pull_request:
-    branches:
-      - main
-      - develop
+    push:
+      branches:
+        - main
+        - develop
+    pull_request:
+      branches:
+        - main
+        - develop
+    schedule:
+      - cron:  '0 * * * *'
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
