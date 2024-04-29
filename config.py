@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 
 def load_environment_variables():
-    load_dotenv('secret.env')
+    load_dotenv('.env')
     env_vars = {
         'db_url': os.getenv('DB_URL'),
         'token': os.getenv('DB_TOKEN'),
