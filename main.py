@@ -19,9 +19,9 @@ def prepare_data(data_manager, topics):
     """
     results = {}
     for topic, place , time, calc in topics:
-        df = data_manager.query_influx(topic, place) # DB에서 데이터 불러오기
-        df = DataManager.drop_and_time_convert_data(df) # 필요없는 컬럼 삭제 및 한국시간으로 변환
-        series = DataManager.resample_data(df, 'value', time, calc) # 데이터 리샘플링
+        df = data_manager.query_influx(topic, place)
+        df = DataManager.drop_and_time_convert_data(df)
+        series = DataManager.resample_data(df, 'value', time, calc)
         results[place+'_'+topic] = series
     return pd.DataFrame({
         'outdoor_temperature': results['outdoor_temperature'],
