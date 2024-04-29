@@ -130,5 +130,5 @@ def schedule_main():
 
 
 if __name__ == '__main__':
-    # main()
-    schedule_main()
+    main()
+    # schedule_main()
