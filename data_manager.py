@@ -55,6 +55,7 @@ class DataManager:
     def drop_and_time_convert_data(df):
         """
         데이터프레임에서 필요없는 컬럼을 제거하고, 시간 컬럼을 한국 시간으로 변환합니다.
+        이후 주말데이터를 제거합니다.
 
         Args:
             df (DataFrame): 원본 데이터프레임.
@@ -64,6 +65,7 @@ class DataManager:
         """
         df = df.drop(columns=['_start', '_stop', 'result', 'table', 'topic', 'device'])
         df['_time'] = pd.to_datetime(df['_time']).dt.tz_convert('Asia/Seoul').dt.tz_localize(None)
+        df = df[df['_time'].dt.dayofweek < 5]
         return df
 
     @staticmethod
@@ -121,7 +123,7 @@ class DataManager:
     @staticmethod
     def fill_missing_values(df):
         """
-        데이터프레임의 결측치를 처리합니다. 특정 컬럼의 첫 번째 값이 결측치인 경우 평균 값 또는 최근 유효 값으로 채웁니다.
+        데이터프레임의 결측치를 처리합니다. 특정 컬럼의 첫 번째 값이 결측치인 경우 최근 유효 값으로 채웁니다.
         이후 나머지 결측치들은 결측치 전방 채우기로 채웁니다.
 
         Args:
@@ -131,11 +133,20 @@ class DataManager:
             DataFrame: 결측치가 처리된 데이터프레임.
         """
         if pd.isna(df['outdoor_temperature'].iloc[0]):
-            avg_temperature = df['outdoor_temperature'].mean()
-            df.at[df.index[0], 'outdoor_temperature'] = avg_temperature
+            notnull_outdoor_temperature = df[df['outdoor_temperature'].notnull()].iloc[0]['outdoor_temperature']
+            df.at[df.index[0], 'outdoor_temperature'] = notnull_outdoor_temperature
+
         if pd.isna(df['outdoor_humidity'].iloc[0]):
-            avg_humidity = df['outdoor_humidity'].mean()
-            df.at[df.index[0], 'outdoor_humidity'] = avg_humidity
+            notnull_outdoor_humidity = df[df['outdoor_humidity'].notnull()].iloc[0]['outdoor_humidity']
+            df.at[df.index[0], 'outdoor_humidity'] = notnull_outdoor_humidity
+
+        if pd.isna(df['temperature'].iloc[0]):
+            notnull_temperature = df[df['temperature'].notnull()].iloc[0]['temperature']
+            df.at[df.index[0], 'temperature'] = notnull_temperature
+
+        if pd.isna(df['humidity'].iloc[0]):
+            notnull_humidity = df[df['humidity'].notnull()].iloc[0]['humidity']
+            df.at[df.index[0], 'humidity'] = notnull_humidity
 
         if pd.isna(df['air_conditional'].iloc[0]):
             df.at[df.index[0], 'air_conditional'] = 'close'
