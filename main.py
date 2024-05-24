@@ -1,12 +1,12 @@
-from config import load_environment_variables
-from object_service import ObjectService
-from model_manager import ModelManager
-from data_manager import DataManager
-from issue_token import get_token
+from config.config import load_environment_variables
+from utils.object_service import ObjectService
+from manager.model_manager import ModelManager
+from manager.data_manager import DataManager
+from utils.issue_token import get_token
 import pandas as pd
 import joblib
 
-def prepare_data(data_manager, topics):
+def prepare_data(data_manager, topics, device_name):
     """
     지정된 토픽에 따라 데이터베이스에서 데이터를 쿼리하고, 필요한 처리를 수행한 후 데이터 프레임을 생성합니다.
 
@@ -29,7 +29,7 @@ def prepare_data(data_manager, topics):
         'temperature': results['class_a_temperature'],
         'humidity': results['class_a_humidity'],
         'people_count': results['class_a_total_people_count'],
-        'air_conditional': results['class_a_magnet_status']
+        device_name: results['class_a_magnet_status']
     })
 
 def handle_missing_values(data_df):
@@ -99,7 +99,7 @@ def main():
         ('total_people_count', 'class_a', 'T', 'last'),
         ('magnet_status', 'class_a', 'T', 'last'),
     ]
-    data_df = prepare_data(data_manager, topics)
+    data_df = prepare_data(data_manager, topics, 'air_conditional')
     data_manager.close_connection()
     print('데이터 프레임 : \n', data_df)
 

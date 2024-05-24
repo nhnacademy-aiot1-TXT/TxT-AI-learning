@@ -22,6 +22,7 @@ class DataManager:
     def query_influx(self, measurement, place):
         """
         지정된 장소와 측정값에 대한 데이터를 요청합니다.
+        쿼리문 : 현재시간에서 날짜만 추출한 뒤 보고싶은 기간만큼의 날짜를 뺍니다. 이후 해당 날짜 0시부터 현재까지의 데이터를 조회합니다.
 
         Args:
             measurement (str): 필요한 센서 정보.
