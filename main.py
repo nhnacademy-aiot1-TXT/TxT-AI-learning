@@ -1,4 +1,4 @@
-from config.config import load_environment_variables
+from config import load_environment_variables
 from manager.model_manager import ModelManager
 from utils.object_service import ObjectService
 from manager.data_manager import DataManager
