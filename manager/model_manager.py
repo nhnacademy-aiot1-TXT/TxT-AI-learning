@@ -1,8 +1,6 @@
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import make_pipeline
 from sklearn.metrics import accuracy_score
+import xgboost as xgb
 
 class ModelManager:
     """
@@ -21,8 +19,7 @@ class ModelManager:
         Args:
             data_df (DataFrame): 모델 훈련에 사용될 데이터.
         """
-        self.data_df = data_df
-        # self.data_df['air_conditional'] = self.data_df['air_conditional'].map({'close': 0, 'open': 1}) # air_conditional의 값이 close면 0, open이면 1로 변경
+        self.data_df = data_df.copy()
         self.model = None
         self.prediction = None
 
@@ -34,11 +31,18 @@ class ModelManager:
         y = self.data_df['air_conditional']
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    def train_random_forest(self):
+    def train_xgboost(self):
         """
-        랜덤 포레스트 모델을 훈련합니다. 트리의 개수는 100개로 설정되며, 랜덤 시드는 42입니다.
+        XGBoost 모델을 훈련합니다. 튜닝된 하이퍼파라미터를 사용합니다.
         """
-        self.model = RandomForestClassifier(n_estimators=100, random_state=42)
+        self.model = xgb.XGBClassifier(
+            use_label_encoder=False,
+            eval_metric='logloss',
+            n_estimators=300,
+            max_depth=5,
+            learning_rate=0.1,
+            colsample_bytree=0.5
+        )
         self.model.fit(self.X_train, self.y_train)
         self.prediction = self.model.predict(self.X_test)
 

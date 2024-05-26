@@ -147,6 +147,19 @@ class DataManager:
         df = df.fillna(method='ffill', axis=0)
         return df
 
+    @staticmethod
+    def convert_air_conditional(df):
+        """
+        'air_conditional' 컬럼의 값을 'close'에서 0으로, 'open'에서 1로 변환합니다.
+
+        Args:
+            data_df (DataFrame): 변환할 데이터 프레임.
+
+        Returns:
+            DataFrame: 변환된 데이터 프레임.
+        """
+        df['air_conditional'] = df['air_conditional'].map({'close': 0, 'open': 1})
+        return df
 
     @staticmethod
     def remove_outliers(data_df):

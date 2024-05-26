@@ -23,6 +23,7 @@ def prepare_data(data_manager, topics, device_name):
         df = DataManager.drop_and_time_convert_data(df)
         series = DataManager.resample_data(df, 'value', time, calc)
         results[place+'_'+topic] = series
+
     return pd.DataFrame({
         'outdoor_temperature': results['outdoor_temperature'],
         'outdoor_humidity': results['outdoor_humidity'],
@@ -46,18 +47,6 @@ def handle_missing_values(data_df):
     print('Initial null value:\n', null_values)
     return DataManager.fill_missing_values(data_df)
 
-def convert_air_conditional(data_df):
-    """
-    'air_conditional' 컬럼의 값을 'close'에서 0으로, 'open'에서 1로 변환합니다.
-
-    Args:
-        data_df (DataFrame): 변환할 데이터 프레임.
-
-    Returns:
-        DataFrame: 변환된 데이터 프레임.
-    """
-    data_df['air_conditional'] = data_df['air_conditional'].map({'close': 0, 'open': 1})
-    return data_df
 
 def train_and_evaluate_models(data_df_filled):
     """
@@ -71,9 +60,9 @@ def train_and_evaluate_models(data_df_filled):
     """
     model_manager = ModelManager(data_df_filled)
     model_manager.train_test_split()
-    model_manager.train_random_forest()
+    model_manager.train_xgboost()
     accuracy = model_manager.evaluate_model()
-    print(f"RandomForest Accuracy: {accuracy}")
+    print(f"XGBoost Accuracy: {accuracy}")
     return model_manager.model
 
 def save_and_upload_model(model, env_vars):
@@ -119,8 +108,7 @@ def main():
     data_df_filled = handle_missing_values(data_df)
     print('After processing null value: \n', data_df_filled.isnull().sum())
 
-    data_df_converted = convert_air_conditional(data_df_filled)
-
+    data_df_converted = DataManager.convert_air_conditional(data_df_filled)
     data_df_no_outliers = DataManager.remove_outliers(data_df_converted)
     
     model = train_and_evaluate_models(data_df_no_outliers)
