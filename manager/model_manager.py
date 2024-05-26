@@ -8,8 +8,8 @@ class ModelManager:
 
     Attributes:
         data_df (DataFrame): 학습에 사용될 데이터 프레임.
-        models (dict): 훈련된 모델들을 저장하는 딕셔너리.
-        predictions (dict): 모델별 예측 결과를 저장하는 딕셔너리.
+        model (xgb.XGBClassifier): 훈련된 모델들을 저장하는 딕셔너리.
+        prediction (array): 모델의 예측 결과.
     """
     
     def __init__(self, data_df):
@@ -51,6 +51,6 @@ class ModelManager:
         모델을 평가하여 모델의 정확도를 계산합니다.
 
         Returns:
-            dict: 모델 이름을 키로 하고 정확도를 값으로 하는 딕셔너리.
+            float: 모델의 정확도.
         """
         return accuracy_score(self.y_test, self.prediction)
