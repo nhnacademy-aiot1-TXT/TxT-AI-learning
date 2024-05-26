@@ -1,6 +1,6 @@
 from config.config import load_environment_variables
-from utils.object_service import ObjectService
 from manager.model_manager import ModelManager
+from utils.object_service import ObjectService
 from manager.data_manager import DataManager
 from utils.issue_token import get_token
 import pandas as pd
@@ -46,6 +46,19 @@ def handle_missing_values(data_df):
     print('Initial null value:\n', null_values)
     return DataManager.fill_missing_values(data_df)
 
+def convert_air_conditional(data_df):
+    """
+    'air_conditional' 컬럼의 값을 'close'에서 0으로, 'open'에서 1로 변환합니다.
+
+    Args:
+        data_df (DataFrame): 변환할 데이터 프레임.
+
+    Returns:
+        DataFrame: 변환된 데이터 프레임.
+    """
+    data_df['air_conditional'] = data_df['air_conditional'].map({'close': 0, 'open': 1})
+    return data_df
+
 def train_and_evaluate_models(data_df_filled):
     """
     데이터 프레임을 사용하여 여러 머신러닝 모델을 훈련시키고 평가합니다.
@@ -58,13 +71,10 @@ def train_and_evaluate_models(data_df_filled):
     """
     model_manager = ModelManager(data_df_filled)
     model_manager.train_test_split()
-    model_manager.train_logistic_regression()
     model_manager.train_random_forest()
-    model_manager.train_xgboost()
-    accuracies = model_manager.evaluate_models()
-    for model_name, accuracy in accuracies.items():
-        print(f"{model_name} Accuracy: {accuracy}")
-    return model_manager.models['RandomForest']
+    accuracy = model_manager.evaluate_model()
+    print(f"RandomForest Accuracy: {accuracy}")
+    return model_manager.model
 
 def save_and_upload_model(model, env_vars):
     """
@@ -108,8 +118,12 @@ def main():
 
     data_df_filled = handle_missing_values(data_df)
     print('After processing null value: \n', data_df_filled.isnull().sum())
+
+    data_df_converted = convert_air_conditional(data_df_filled)
+
+    data_df_no_outliers = DataManager.remove_outliers(data_df_converted)
     
-    model = train_and_evaluate_models(data_df_filled)
+    model = train_and_evaluate_models(data_df_no_outliers)
     save_and_upload_model(model, env_vars)
 
 if __name__ == '__main__':
