@@ -12,7 +12,7 @@
 ## 파일 설명
 - data_analysis.ipynb : 모델 구현을 위한 데이터 분석 파일
 - main.py : 전체 프로세스를 실행하는 메인 파일
-- config/config.py : 환경 변수를 로드하는 설정 파일
+- config.py : 환경 변수를 로드하는 설정 파일
 - manager/data_manager.py : InfluxDB에 데이터를 쿼리하고 전처리하는 클래스
 - manager/model_manager.py : 모델을 훈련하고 평가하는 클래스
 - utils/object_service.py : NHN Cloud Object Storage에 접근하여 모델 객체를 업로드하는 클래스
