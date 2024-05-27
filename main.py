@@ -1,12 +1,12 @@
 from config import load_environment_variables
-from object_service import ObjectService
-from model_manager import ModelManager
-from data_manager import DataManager
-from issue_token import get_token
+from manager.model_manager import ModelManager
+from utils.object_service import ObjectService
+from manager.data_manager import DataManager
+from utils.issue_token import get_token
 import pandas as pd
 import joblib
 
-def prepare_data(data_manager, topics):
+def prepare_data(data_manager, topics, device_name):
     """
     지정된 토픽에 따라 데이터베이스에서 데이터를 쿼리하고, 필요한 처리를 수행한 후 데이터 프레임을 생성합니다.
 
@@ -23,13 +23,14 @@ def prepare_data(data_manager, topics):
         df = DataManager.drop_and_time_convert_data(df)
         series = DataManager.resample_data(df, 'value', time, calc)
         results[place+'_'+topic] = series
+
     return pd.DataFrame({
         'outdoor_temperature': results['outdoor_temperature'],
         'outdoor_humidity': results['outdoor_humidity'],
         'temperature': results['class_a_temperature'],
         'humidity': results['class_a_humidity'],
         'people_count': results['class_a_total_people_count'],
-        'air_conditional': results['class_a_magnet_status']
+        device_name: results['class_a_magnet_status']
     })
 
 def handle_missing_values(data_df):
@@ -46,6 +47,7 @@ def handle_missing_values(data_df):
     print('Initial null value:\n', null_values)
     return DataManager.fill_missing_values(data_df)
 
+
 def train_and_evaluate_models(data_df_filled):
     """
     데이터 프레임을 사용하여 여러 머신러닝 모델을 훈련시키고 평가합니다.
@@ -58,13 +60,10 @@ def train_and_evaluate_models(data_df_filled):
     """
     model_manager = ModelManager(data_df_filled)
     model_manager.train_test_split()
-    model_manager.train_logistic_regression()
-    model_manager.train_random_forest()
     model_manager.train_xgboost()
-    accuracies = model_manager.evaluate_models()
-    for model_name, accuracy in accuracies.items():
-        print(f"{model_name} Accuracy: {accuracy}")
-    return model_manager.models['RandomForest']
+    accuracy = model_manager.evaluate_model()
+    print(f"XGBoost Accuracy: {accuracy}")
+    return model_manager.model
 
 def save_and_upload_model(model, env_vars):
     """
@@ -99,7 +98,7 @@ def main():
         ('total_people_count', 'class_a', 'T', 'last'),
         ('magnet_status', 'class_a', 'T', 'last'),
     ]
-    data_df = prepare_data(data_manager, topics)
+    data_df = prepare_data(data_manager, topics, 'air_conditional')
     data_manager.close_connection()
     print('데이터 프레임 : \n', data_df)
 
@@ -108,8 +107,11 @@ def main():
 
     data_df_filled = handle_missing_values(data_df)
     print('After processing null value: \n', data_df_filled.isnull().sum())
+
+    data_df_converted = DataManager.convert_air_conditional(data_df_filled)
+    data_df_no_outliers = DataManager.remove_outliers(data_df_converted)
     
-    model = train_and_evaluate_models(data_df_filled)
+    model = train_and_evaluate_models(data_df_no_outliers)
     save_and_upload_model(model, env_vars)
 
 if __name__ == '__main__':

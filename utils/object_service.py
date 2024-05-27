@@ -11,10 +11,10 @@ class ObjectService:
     
     def __init__(self, storage_url, token_id):
         """
-        객체 저장 서비스에 대한 접근을 관리하기 위해 초기화합니다.
+        NHN Cloud Object storage 서비스에 대한 접근을 관리하기 위해 초기화합니다.
 
         Args:
-            storage_url (str): 객체 저장소의 URL.
+            storage_url (str): 저장소의 URL.
             token_id (str): 접근을 위한 인증 토큰 ID.
         """
         self.storage_url = storage_url

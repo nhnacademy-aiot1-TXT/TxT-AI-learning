@@ -2,7 +2,7 @@ import requests
 
 def get_token(auth_url, tenant_id, username, password):
     """
-    주어진 인증 정보를 사용하여 NHN Cloud ObjectStorage에 접근할 수 있는 API 토큰을 발급받습니다.
+    주어진 인증 정보를 사용하여 NHN Cloud Object Storage에 접근할 수 있는 API 토큰을 발급받습니다.
 
     Args:
         auth_url (str): 토큰을 발급받기 위한 인증 서버의 URL.
