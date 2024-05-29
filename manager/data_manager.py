@@ -137,7 +137,7 @@ class DataManager:
         Returns:
             DataFrame: 결측치가 처리된 데이터프레임.
         """
-        columns_to_fill = ['outdoor_temperature', 'outdoor_humidity', 'temperature', 'humidity', 'people_count', 'air_conditional']
+        columns_to_fill = ['outdoor_temperature', 'outdoor_humidity', 'temperature', 'humidity', 'people_count', 'air_conditioner']
 
         for column in columns_to_fill:
             if pd.isna(df[column].iloc[0]):
@@ -148,9 +148,9 @@ class DataManager:
         return df
 
     @staticmethod
-    def convert_air_conditional(df):
+    def convert_air_conditioner(df):
         """
-        'air_conditional' 컬럼의 값을 'close'에서 0으로, 'open'에서 1로 변환합니다.
+        'air_conditioner' 컬럼의 값을 'close'에서 0으로, 'open'에서 1로 변환합니다.
 
         Args:
             data_df (DataFrame): 변환할 데이터 프레임.
@@ -158,7 +158,7 @@ class DataManager:
         Returns:
             DataFrame: 변환된 데이터 프레임.
         """
-        df['air_conditional'] = df['air_conditional'].map({'close': 0, 'open': 1})
+        df['air_conditioner'] = df['air_conditioner'].map({'close': 0, 'open': 1})
         return df
 
     @staticmethod
