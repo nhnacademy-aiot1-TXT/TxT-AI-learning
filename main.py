@@ -76,7 +76,7 @@ def save_and_upload_model(model, env_vars):
     Returns:
         None
     """
-    model_path, model_name = './', 'air_conditional_ai_model.joblib'
+    model_path, model_name = './', 'air_conditioner_ai_model.joblib'
     joblib.dump(model, model_path + model_name)
     token = get_token(env_vars['auth_url'], env_vars['tenant_id'], env_vars['user_email'], env_vars['password'])
     access_token_id = token.get('access').get('token').get('id')
@@ -98,7 +98,7 @@ def main():
         ('total_people_count', 'class_a', 'T', 'last'),
         ('magnet_status', 'class_a', 'T', 'last'),
     ]
-    data_df = prepare_data(data_manager, topics, 'air_conditional')
+    data_df = prepare_data(data_manager, topics, 'air_conditioner')
     data_manager.close_connection()
     print('데이터 프레임 : \n', data_df)
 
@@ -108,7 +108,7 @@ def main():
     data_df_filled = handle_missing_values(data_df)
     print('After processing null value: \n', data_df_filled.isnull().sum())
 
-    data_df_converted = DataManager.convert_air_conditional(data_df_filled)
+    data_df_converted = DataManager.convert_air_conditioner(data_df_filled)
     data_df_no_outliers = DataManager.remove_outliers(data_df_converted)
     
     model = train_and_evaluate_models(data_df_no_outliers)
