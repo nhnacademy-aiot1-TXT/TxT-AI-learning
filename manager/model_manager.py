@@ -28,7 +28,7 @@ class ModelManager:
         데이터를 학습용과 테스트용으로 분할합니다. 테스트 셋은 전체 데이터의 20%로 설정됩니다.
         """
         X = self.data_df[['outdoor_temperature', 'outdoor_humidity', 'temperature', 'humidity', 'people_count', 'time_in_minutes']]
-        y = self.data_df['air_conditional']
+        y = self.data_df['air_conditioner']
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     def train_xgboost(self):
