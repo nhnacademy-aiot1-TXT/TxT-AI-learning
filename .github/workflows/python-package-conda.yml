@@ -39,6 +39,12 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
+    - name: Docker build and push
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker build -t ${{ secrets.DOCKER_REPO }} .
+        docker push ${{ secrets.DOCKER_REPO }}
+
     - name: execute shell script
       uses: appleboy/ssh-action@master
       with:
@@ -48,4 +54,8 @@ jobs:
         port: 22
         script_stop: true
         script: |
-          ./startup.sh
+          docker stop TxT-AI_learning || true
+          docker rm -f TxT-AI_learning || true
+          docker rmi $(docker images ${{ secrets.DOCKER_REPO }} -q)
+          docker pull ${{ secrets.DOCKER_REPO }}
+          docker run -d --name TxT-AI_learning ${{ secrets.DOCKER_REPO }}
