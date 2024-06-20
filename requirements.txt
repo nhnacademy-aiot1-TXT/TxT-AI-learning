@@ -1,7 +1,7 @@
-python-dotenv
+pandas
+joblib
+xgboost
 requests
 scikit-learn
-xgboost
 influxdb-client
-schedule
-pandas
+python-dotenv
