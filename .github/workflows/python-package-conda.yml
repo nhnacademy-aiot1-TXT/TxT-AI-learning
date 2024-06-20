@@ -36,6 +36,33 @@ jobs:
         target: "~/"
         rm: false
 
+      
+    - name: Create .env file
+      run: |
+        echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+        echo "DB_TOKEN=${{ secrets.DB_TOKEN }}" >> .env
+        echo "DB_ORG=${{ secrets.DB_ORG }}" >> .env
+        echo "DB_BUCKET=${{ secrets.DB_BUCKET }}" >> .env
+        echo "STORAGE_URL=${{ secrets.STORAGE_URL }}" >> .env
+        echo "CONTAINER_NAME=${{ secrets.CONTAINER_NAME }}" >> .env
+        echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
+        echo "TENANT_ID=${{ secrets.TENANT_ID }}" >> .env
+        echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> .env
+        echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
+
+      env:
+        DB_URL: ${{secrets.DB_URL}}
+        DB_TOKEN: ${{secrets.DB_TOKEN}}
+        DB_ORG: ${{secrets.DB_ORG}}
+        DB_BUCKET: ${{secrets.DB_BUCKET}}
+        STORAGE_URL: ${{secrets.STORAGE_URL}}
+        CONTAINER_NAME: ${{secrets.CONTAINER_NAME}}
+        AUTH_URL: ${{secrets.AUTH_URL}}
+        TENANT_ID: ${{secrets.TENANT_ID}}
+        USER_EMAIL: ${{secrets.USER_EMAIL}}
+        PASSWORD: ${{secrets.PASSWORD}}
+
+
     - name: Install dependencies
       run: pip install -r requirements.txt
 
@@ -58,4 +85,5 @@ jobs:
           docker rm -f TxT-AI_learning || true
           docker rmi $(docker images ${{ secrets.DOCKER_REPO }} -q)
           docker pull ${{ secrets.DOCKER_REPO }}
-          docker run -d --name TxT-AI_learning ${{ secrets.DOCKER_REPO }}
+          docker run -d --name TxT-AI_learning --env-file .env ${{ secrets.DOCKER_REPO }}
+
