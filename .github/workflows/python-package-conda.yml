@@ -83,5 +83,5 @@ jobs:
           docker rm -f TxT-AI_learning || true
           docker rmi $(docker images ${{ secrets.DOCKER_REPO }} -q)
           docker pull ${{ secrets.DOCKER_REPO }}
-          docker run -d --name TxT-AI_learning --env-file .env ${{ secrets.DOCKER_REPO }}
+          docker run -d --name TxT-AI_learning ${{ secrets.DOCKER_REPO }}
 
