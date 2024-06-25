@@ -24,4 +24,8 @@ def load_environment_variables():
         'storage_url': os.getenv('STORAGE_URL'),
         'container_name': os.getenv('CONTAINER_NAME')
     }
+
+    for key, value in env_vars.items():
+        print(f"{key}: {value}")
+            
     return env_vars
