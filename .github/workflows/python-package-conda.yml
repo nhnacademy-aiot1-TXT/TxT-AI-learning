@@ -58,7 +58,10 @@ jobs:
         script: |
           docker stop TxT-AI_learning || true
           docker rm -f TxT-AI_learning || true
-          docker rmi $(docker images ${{ secrets.DOCKER_REPO }} -q)
+          images=$(docker images ${{ secrets.DOCKER_REPO }} -q)
+          if [ -n "$images" ]; then
+            docker rmi $images
+          fi
           docker pull ${{ secrets.DOCKER_REPO }}
           docker run -d --name TxT-AI_learning ${{ secrets.DOCKER_REPO }}
 
