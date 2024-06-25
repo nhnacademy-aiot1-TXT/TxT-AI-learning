@@ -4,7 +4,7 @@ import xgboost as xgb
 
 class ModelManager:
     """
-    데이터를 바탕으로 머신러닝 모델을 관리하고 평가하는 클래스입니다. 
+    데이터를 바탕으로 머신러닝 모델을 관리하고 평가하는 클래스입니다.
 
     Attributes:
         data_df (DataFrame): 학습에 사용될 데이터 프레임.
